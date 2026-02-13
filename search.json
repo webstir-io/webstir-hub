@@ -1,0 +1,74 @@
+[
+  {
+    "path": "/docs/content-pipeline/",
+    "title": "Content pipeline",
+    "headings": [
+      "Add a doc",
+      "Where the output goes",
+      "Routing rules (simple)",
+      "Frontmatter (optional)",
+      "Content navigation (optional)",
+      "Search (optional)",
+      "Development vs publish",
+      "Clean URLs on static hosts"
+    ],
+    "excerpt": "Content pipeline This starter supports Markdown docs out of the box. If you add files under src/frontend/content/**/*.md, Webstir will: Convert Markdown to HTML at build time Wrap it in your shared layout (src/frontend/app/app.html) Write r…",
+    "kind": "docs"
+  },
+  {
+    "path": "/docs/css-playbook/",
+    "title": "CSS Playbook",
+    "headings": [
+      "Principles",
+      "The Contract (v0)",
+      "Layout (classes)",
+      "Components (data-ui)",
+      "Tokens",
+      "Scoping"
+    ],
+    "excerpt": "CSS Playbook This starter uses a small, convention-first CSS system. The goal is to keep styling predictable and reduce \"naming entropy\" (lots of one-off classes and tokens). Principles Tokens-first: use CSS custom properties instead of ad-…",
+    "kind": "docs"
+  },
+  {
+    "path": "/docs/hosting/",
+    "title": "Deploying your site",
+    "description": "Clean URLs, sitemap, and static hosting notes for Webstir SSG.",
+    "headings": [
+      "Clean URLs (recommended)",
+      "GitHub Pages (project sites)",
+      "Sitemap",
+      "Broken link checks"
+    ],
+    "excerpt": "Deploying your site Webstir SSG outputs plain HTML files that can be hosted on any static host (S3, Netlify, Cloudflare Pages, etc.). Clean URLs (recommended) The publish output is directory-based: /about/ → about/index.html /docs/content-p…",
+    "kind": "docs"
+  },
+  {
+    "path": "/",
+    "title": "Webstir SSG Starter",
+    "headings": [
+      "Some things to try"
+    ],
+    "excerpt": "Webstir SSG Starter Welcome to your Webstir site A clean starting point for a static site: shared layout, simple pages, and static-first output. About this site Some things to try Start the dev server: webstir watch Edit this page: src/fron…",
+    "kind": "page"
+  },
+  {
+    "path": "/about/",
+    "title": "About",
+    "headings": [
+      "What is SSG?",
+      "How Webstir helps",
+      "Dev experience",
+      "Build output",
+      "Deploying"
+    ],
+    "excerpt": "About This starter uses static site generation (SSG): your pages become fast, standalone HTML you can deploy anywhere. What is SSG? With SSG, your site is rendered at build time. Visitors get a real HTML page (great for performance and SEO)…",
+    "kind": "page"
+  },
+  {
+    "path": "/docs/",
+    "title": "Docs",
+    "headings": [],
+    "excerpt": "Docs Documentation Drop Markdown files into src/frontend/content/ and Webstir turns them into real pages under /docs/.",
+    "kind": "page"
+  }
+]

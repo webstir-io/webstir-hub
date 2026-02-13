@@ -1,0 +1,15 @@
+[
+  {
+    "path": "/docs/content-pipeline/",
+    "title": "Content pipeline"
+  },
+  {
+    "path": "/docs/css-playbook/",
+    "title": "CSS Playbook"
+  },
+  {
+    "path": "/docs/hosting/",
+    "title": "Deploying your site",
+    "order": 2
+  }
+]

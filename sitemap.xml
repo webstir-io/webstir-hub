@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Set WEBSTIR_SITE_URL to emit absolute <loc> entries. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>/docs/content-pipeline/</loc></url>
+  <url><loc>/docs/css-playbook/</loc></url>
+  <url><loc>/docs/hosting/</loc></url>
+</urlset>
