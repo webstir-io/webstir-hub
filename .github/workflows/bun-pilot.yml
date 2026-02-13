@@ -5,7 +5,6 @@ on:
 
 permissions:
   contents: read
-  packages: read
 
 concurrency:
   group: bun-pilot
@@ -15,8 +14,6 @@ jobs:
   bun-pilot:
     runs-on: ubuntu-latest
     env:
-      NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
-      GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
       GH_PAGES_NO_PUSH: "1"
       GH_PAGES_BRANCH: gh-pages-bun-pilot
     steps:
@@ -27,29 +24,6 @@ jobs:
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: "1.3.5"
-
-      - name: Configure npm auth for GitHub Packages
-        if: ${{ env.GH_PACKAGES_TOKEN != '' }}
-        run: |
-          TOKEN="$(printf '%s' "${GH_PACKAGES_TOKEN}" | tr -d '\r\n')"
-          NPMRC="${NPM_CONFIG_USERCONFIG:-$GITHUB_WORKSPACE/.npmrc}"
-          {
-          echo "@webstir-io:registry=https://npm.pkg.github.com"
-          echo "//npm.pkg.github.com/:_authToken=${TOKEN}"
-          echo "always-auth=true"
-          } >> "$NPMRC"
-
-      - name: Verify package auth token
-        run: |
-          TOKEN="$(printf '%s' "${GH_PACKAGES_TOKEN:-}" | tr -d '\r\n')"
-          if [[ -z "${TOKEN}" ]]; then
-            echo "GH_PACKAGES_TOKEN is empty or unavailable to this workflow run." >&2
-            exit 1
-          fi
-          curl --fail --silent --show-error \
-            -H "Authorization: Bearer ${TOKEN}" \
-            -H "Accept: application/vnd.npm.install-v1+json" \
-            https://npm.pkg.github.com/@webstir-io%2fwebstir-testing >/dev/null
 
       - name: Install dependencies with Bun
         run: bun install
