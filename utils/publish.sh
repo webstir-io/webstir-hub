@@ -8,7 +8,7 @@ DIST_DIR="$ROOT_DIR/dist/frontend"
 FRONTEND_CLI="$ROOT_DIR/node_modules/.bin/webstir-frontend"
 if [[ ! -f "$FRONTEND_CLI" ]]; then
   echo "[publish] Missing $FRONTEND_CLI" >&2
-  echo "[publish] Install dependencies first (npm install / pnpm install)." >&2
+  echo "[publish] Install dependencies first (npm install)." >&2
   exit 1
 fi
 
