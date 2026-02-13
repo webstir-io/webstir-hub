@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: write
-  packages: read
 
 concurrency:
   group: gh-pages
@@ -17,8 +16,6 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN || github.token }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,15 +26,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.18.1
-
-      - name: Configure npm auth for GitHub Packages
-        if: ${{ env.NODE_AUTH_TOKEN != '' }}
-        run: |
-          NPMRC="${NPM_CONFIG_USERCONFIG:-$HOME/.npmrc}"
-          {
-            echo "@webstir-io:registry=https://npm.pkg.github.com"
-            echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}"
-          } >> "$NPMRC"
 
       - name: Install dependencies
         run: npm ci --no-audit --no-fund

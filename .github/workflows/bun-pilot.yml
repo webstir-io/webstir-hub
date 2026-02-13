@@ -5,7 +5,6 @@ on:
 
 permissions:
   contents: read
-  packages: read
 
 concurrency:
   group: bun-pilot
@@ -15,7 +14,6 @@ jobs:
   bun-pilot:
     runs-on: ubuntu-latest
     env:
-      NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN || github.token }}
       GH_PAGES_NO_PUSH: "1"
       GH_PAGES_BRANCH: gh-pages-bun-pilot
     steps:
@@ -25,16 +23,7 @@ jobs:
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: "1.2.22"
-
-      - name: Configure npm auth for GitHub Packages
-        if: ${{ env.NODE_AUTH_TOKEN != '' }}
-        run: |
-          NPMRC="${NPM_CONFIG_USERCONFIG:-$HOME/.npmrc}"
-          {
-            echo "@webstir-io:registry=https://npm.pkg.github.com"
-            echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}"
-          } >> "$NPMRC"
+          bun-version: "1.3.5"
 
       - name: Install dependencies with Bun
         run: bun install
