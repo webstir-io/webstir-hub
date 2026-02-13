@@ -15,26 +15,41 @@ jobs:
   bun-pilot:
     runs-on: ubuntu-latest
     env:
-      NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN || github.token }}
+      NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+      GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
       GH_PAGES_NO_PUSH: "1"
       GH_PAGES_BRANCH: gh-pages-bun-pilot
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Node 20.18.1
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.18.1
+          registry-url: https://npm.pkg.github.com
+          scope: "@webstir-io"
+
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: "1.2.22"
 
-      - name: Configure npm auth for GitHub Packages
-        if: ${{ env.NODE_AUTH_TOKEN != '' }}
+      - name: Ensure package token exists
         run: |
-          NPMRC="${NPM_CONFIG_USERCONFIG:-$HOME/.npmrc}"
-          {
-            echo "@webstir-io:registry=https://npm.pkg.github.com"
-            echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}"
-          } >> "$NPMRC"
+          if [[ -z "${GH_PACKAGES_TOKEN:-}" ]]; then
+            echo "GH_PACKAGES_TOKEN is required for Bun pilot package installs." >&2
+            exit 1
+          fi
+
+      - name: Configure npm auth for GitHub Packages
+        run: |
+          cat > "$HOME/.npmrc" <<EOF
+          @webstir-io:registry=https://npm.pkg.github.com
+          //npm.pkg.github.com/:_authToken=${GH_PACKAGES_TOKEN}
+          always-auth=true
+          EOF
+          cp "$HOME/.npmrc" "$GITHUB_WORKSPACE/.npmrc"
 
       - name: Install dependencies with Bun
         run: bun install
