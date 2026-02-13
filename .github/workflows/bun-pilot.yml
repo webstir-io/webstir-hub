@@ -1,0 +1,42 @@
+name: Bun Pilot
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: bun-pilot
+  cancel-in-progress: true
+
+jobs:
+  bun-pilot:
+    runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN || github.token }}
+      GH_PAGES_NO_PUSH: "1"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.2.22"
+
+      - name: Configure npm auth for GitHub Packages
+        if: ${{ env.NODE_AUTH_TOKEN != '' }}
+        run: |
+          NPMRC="${NPM_CONFIG_USERCONFIG:-$HOME/.npmrc}"
+          {
+            echo "@webstir-io:registry=https://npm.pkg.github.com"
+            echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}"
+          } >> "$NPMRC"
+
+      - name: Install dependencies with Bun
+        run: bun install
+
+      - name: Validate deploy script with Bun (no push)
+        run: bun run deploy
