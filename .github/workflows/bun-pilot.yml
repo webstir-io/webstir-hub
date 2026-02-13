@@ -17,6 +17,7 @@ jobs:
     env:
       NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN || github.token }}
       GH_PAGES_NO_PUSH: "1"
+      GH_PAGES_BRANCH: gh-pages-bun-pilot
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
