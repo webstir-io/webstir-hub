@@ -17,44 +17,39 @@ jobs:
     env:
       NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
       GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
-      BUN_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
       GH_PAGES_NO_PUSH: "1"
       GH_PAGES_BRANCH: gh-pages-bun-pilot
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Node 20.18.1
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.18.1
-          registry-url: https://npm.pkg.github.com
-          scope: "@webstir-io"
-
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: "1.3.5"
 
-      - name: Ensure package token exists
+      - name: Configure npm auth for GitHub Packages
+        if: ${{ env.GH_PACKAGES_TOKEN != '' }}
         run: |
-          if [[ -z "${GH_PACKAGES_TOKEN:-}" ]]; then
-            echo "GH_PACKAGES_TOKEN is required for Bun pilot package installs." >&2
+          TOKEN="$(printf '%s' "${GH_PACKAGES_TOKEN}" | tr -d '\r\n')"
+          NPMRC="${NPM_CONFIG_USERCONFIG:-$GITHUB_WORKSPACE/.npmrc}"
+          {
+          echo "@webstir-io:registry=https://npm.pkg.github.com"
+          echo "//npm.pkg.github.com/:_authToken=${TOKEN}"
+          echo "always-auth=true"
+          } >> "$NPMRC"
+
+      - name: Verify package auth token
+        run: |
+          TOKEN="$(printf '%s' "${GH_PACKAGES_TOKEN:-}" | tr -d '\r\n')"
+          if [[ -z "${TOKEN}" ]]; then
+            echo "GH_PACKAGES_TOKEN is empty or unavailable to this workflow run." >&2
             exit 1
           fi
-
-      - name: Configure npm auth for GitHub Packages
-        run: |
-          NPMRC="${NPM_CONFIG_USERCONFIG:-$HOME/.npmrc}"
-          cat > "$NPMRC" <<EOF
-          @webstir-io:registry=https://npm.pkg.github.com
-          //npm.pkg.github.com/:_authToken=${GH_PACKAGES_TOKEN}
-          always-auth=true
-          EOF
-          cp "$NPMRC" "$GITHUB_WORKSPACE/.npmrc"
-
-      - name: Validate npm auth can read GitHub Packages
-        run: npm view @webstir-io/module-contract version --registry https://npm.pkg.github.com
+          curl --fail --silent --show-error \
+            -H "Authorization: Bearer ${TOKEN}" \
+            -H "Accept: application/vnd.npm.install-v1+json" \
+            https://npm.pkg.github.com/@webstir-io%2fwebstir-testing >/dev/null
 
       - name: Install dependencies with Bun
         run: bun install
